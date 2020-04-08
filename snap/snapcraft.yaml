@@ -14,12 +14,7 @@ apps:
   matterhorn:
     command: matterhorn
     plugs:
-      - desktop
-      - desktop-legacy
-      - home
-      - removable-media
       - network
-      - network-bind
       - password-manager-service
 
 parts:
