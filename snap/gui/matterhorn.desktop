@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Matterhorn
+Comment=A feature-rich Unix terminal client for the Mattermost chat system
+Icon=${SNAP}/meta/gui/matterhorn.png
+Exec=matterhorn
+Terminal=true
+
+
