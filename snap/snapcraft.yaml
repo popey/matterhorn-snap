@@ -42,3 +42,4 @@ parts:
       - jq
     stage-packages:
       - libsecret-tools
+      - libnotify-bin
