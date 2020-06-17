@@ -14,6 +14,7 @@ apps:
   matterhorn:
     command: matterhorn
     plugs:
+      - desktop
       - network
       - password-manager-service
 
