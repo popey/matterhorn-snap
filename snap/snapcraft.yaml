@@ -27,8 +27,8 @@ parts:
       ARCHITECTURE=$(dpkg --print-architecture)
       echo "Get GitHub releases..."
       wget --quiet https://api.github.com/repos/matterhorn-chat/matterhorn/releases -O releases.json
-      VERSION=$(jq . releases.json | grep tag_name | cut -d'"' -f4 | sed s'/v//' | head -n 1)
-      TAR_URL=$(grep browser_download releases.json | grep "download/${VERSION}/" | grep ubuntu | cut -d'"' -f4)
+      VERSION=$(jq -r '[.[].tag_name][0]' releases.json)
+      TAR_URL=$(jq -r '[.[].assets[] | select(.name | contains("ubuntu")) | select(.name | contains(".tar.")).browser_download_url ][0]' releases.json)
       TAR=$(basename "${TAR_URL}")
       echo "Downloading ${TAR_URL}..."
       wget "${TAR_URL}" -O "${SNAPCRAFT_PART_INSTALL}/${TAR}"
