@@ -33,7 +33,8 @@ parts:
       echo "Downloading ${TAR_URL}..."
       wget "${TAR_URL}" -O "${SNAPCRAFT_PART_INSTALL}/${TAR}"
       echo "Unpacking ${TAR}..."
-      tar jxvf "${SNAPCRAFT_PART_INSTALL}/${TAR}" -C ${SNAPCRAFT_PART_INSTALL}
+      mkdir -p "${SNAPCRAFT_PART_INSTALL}/app"
+      tar jxvf "${SNAPCRAFT_PART_INSTALL}/${TAR}" -C "${SNAPCRAFT_PART_INSTALL}/app" --strip-components=1
       rm -f releases.json
       rm -f "${SNAPCRAFT_PART_INSTALL}/${TAR}"
       snapcraftctl set-version "$VERSION"
