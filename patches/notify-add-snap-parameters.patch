@@ -1,0 +1,20 @@
+--- a/notification-scripts/notify	2020-06-18 21:40:02.000000000 +0200
++++ b/notification-scripts/notify	2020-06-25 01:27:28.997695247 +0200
+@@ -25,7 +25,7 @@
+ notify_CATEGORY="im.received"
+ 
+ # Notification header
+-notify_HEAD="Matterhorn message from $sender"
++notify_HEAD="Message from $sender"
+ 
+ # Escape backslashes in the message
+ message="${message//\\/\\\\}"
+@@ -62,5 +62,8 @@
+ if [ ! -z "$urgency" ]
+ then
+     test "$urgency" = "none" ||
++        notify-send -i $SNAP/meta/gui/${SNAP_NAME}.png \
++            -h "string:desktop-entry:${SNAP_NAME}_${SNAP_NAME}" \
++            -u "$urgency" -c "$notify_CATEGORY" -- "$notify_HEAD" "$notify_BODY"
+         notify-send -u "$urgency" -c "$notify_CATEGORY" -- "$notify_HEAD" "$notify_BODY"
+ fi

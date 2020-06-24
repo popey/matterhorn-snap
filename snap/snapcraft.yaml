@@ -36,9 +36,13 @@ parts:
       echo "Unpacking ${TAR}..."
       mkdir -p "${SNAPCRAFT_PART_INSTALL}/app"
       tar jxvf "${SNAPCRAFT_PART_INSTALL}/${TAR}" -C "${SNAPCRAFT_PART_INSTALL}/app" --strip-components=1
+      for p in "$PWD"/patches/*; do
+        (cd "${SNAPCRAFT_PART_INSTALL}/app" && patch -p1 < $p)
+      done
       rm -f releases.json
       rm -f "${SNAPCRAFT_PART_INSTALL}/${TAR}"
       snapcraftctl set-version "$VERSION"
+    source: .
     build-packages:
       - wget
       - jq
