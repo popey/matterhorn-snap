@@ -18,6 +18,7 @@ apps:
       - desktop
       - network
       - password-manager-service
+      - x11
 
 parts:
   matterhorn:
