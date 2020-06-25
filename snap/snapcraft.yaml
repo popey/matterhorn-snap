@@ -39,6 +39,7 @@ parts:
       for p in "$PWD"/patches/*; do
         (cd "${SNAPCRAFT_PART_INSTALL}/app" && patch -p1 < $p)
       done
+      install -m 755 launcher -D ${SNAPCRAFT_PART_INSTALL}/bin/matterhorn -v
       rm -f releases.json
       rm -f "${SNAPCRAFT_PART_INSTALL}/${TAR}"
       snapcraftctl set-version "$VERSION"

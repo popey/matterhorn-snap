@@ -1,0 +1,32 @@
+#!/bin/bash
+
+config_file="${XDG_CONFIG_HOME:-$HOME/.config}/$SNAP_NAME/config.ini"
+
+if ! [ -e "$config_file" ]; then
+    mkdir -p "$(dirname "$config_file")"
+    cat << EOF > "$config_file"
+[mattermost]
+#host = matterhorn.yourhost.org
+#team = the default team
+
+# Set with: snap run --shell $SNAP_NAME -c "secret-tool lookup $SNAP_INSTANCE_NAME token"
+#tokencmd = secret-tool lookup $SNAP_NAME token
+
+urlOpenCommand = xdg-open
+activityNotifyCommand = ${SNAP%/*}/current/app/notification-scripts/notify
+
+showTypingIndicator = True
+EOF
+
+    echo "A default configuration file has been created at"
+    echo "  $config_file"
+    echo "Use with your \$EDITOR to customize it"
+    echo
+    echo "Call this command to setup an access token:"
+    echo "  snap run --shell $SNAP_NAME -c 'secret-tool lookup $SNAP_INSTANCE_NAME token'"
+    echo
+    echo "Press any key to run $SNAP_NAME..."
+    read -n1 foo
+fi
+
+exec "$SNAP/app/matterhorn" "${@}"
