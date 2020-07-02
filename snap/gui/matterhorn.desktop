@@ -5,5 +5,8 @@ Comment=A feature-rich Unix terminal client for the Mattermost chat system
 Icon=${SNAP}/meta/gui/matterhorn.png
 Exec=matterhorn
 Terminal=true
-
-
+Categories=Network;Chat;
+Keywords=chat;mattermost;
+StartupNotify=true
+StartupWMClass=matterhorn
+X-GNOME-UsesNotifications=true
