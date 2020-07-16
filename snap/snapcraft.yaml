@@ -48,6 +48,7 @@ parts:
       - wget
       - jq
     stage-packages:
+      - aspell
       - libsecret-tools
       - libnotify-bin
       - xclip
