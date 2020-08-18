@@ -21,9 +21,6 @@ apps:
       - x11
 
 parts:
-  build-trigger:
-    plugin: nil
-    source: https://github.com/matterhorn-chat/matterhorn.git
   matterhorn:
     plugin: nil
     override-build: |
