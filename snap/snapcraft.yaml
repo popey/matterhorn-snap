@@ -1,5 +1,5 @@
 name: matterhorn
-base: core18
+base: core20
 adopt-info: matterhorn
 summary: Matterhorn
 description: |
@@ -9,7 +9,7 @@ confinement: strict
 
 apps:
   matterhorn:
-    command: matterhorn
+    command: bin/matterhorn
     plugs:
       - home
       - desktop
@@ -34,20 +34,11 @@ parts:
         (cd "${SNAPCRAFT_PART_SRC}" && patch -p1 < "$p")
       done
 
-      add-apt-repository -y ppa:hvr/ghc && apt-get update
-
-      if apt-get install -y cabal-install-3.0 ghc-8.8.4; then
-        export PATH=/opt/ghc/bin/:$PATH
-      else
-        cabal -j${SNAPCRAFT_PARALLEL_BUILD_COUNT} install cabal-install
-      fi
-
       cabal -j${SNAPCRAFT_PARALLEL_BUILD_COUNT} new-update
     override-build: |
       set -eu
-      export PATH=/opt/ghc/bin/:$PATH
-      export CABALARGS="-j${SNAPCRAFT_PARALLEL_BUILD_COUNT}"
       export LANG=C.UTF-8
+      export CABALARGS="-j${SNAPCRAFT_PARALLEL_BUILD_COUNT}"
 
       cd "${SNAPCRAFT_PART_BUILD}"
       ./scripts/local-mkrelease.sh
@@ -61,12 +52,11 @@ parts:
 
       snapcraftctl set-version "$(git describe --tags)"
     build-packages:
-      # Ubuntu's default can be enabled on core20, as cabal provides new-{update,build}
-      # - cabal-install
-      # - ghc
-      - software-properties-common
+      - cabal-install
+      - ghc
       - zlib1g-dev
     stage-packages:
+      - libatomic1
       - libsecret-tools
       - libnotify-bin
       - xclip
