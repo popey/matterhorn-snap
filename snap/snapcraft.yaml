@@ -7,9 +7,6 @@ description: |
 grade: stable
 confinement: strict
 
-architectures:
-  - build-on: amd64
-
 apps:
   matterhorn:
     command: matterhorn
@@ -37,10 +34,14 @@ parts:
         (cd "${SNAPCRAFT_PART_SRC}" && patch -p1 < "$p")
       done
 
-      add-apt-repository -y ppa:hvr/ghc
-      apt-get update && apt-get install -y cabal-install-3.0 ghc-8.8.4
+      add-apt-repository -y ppa:hvr/ghc && apt-get update
 
-      export PATH=/opt/ghc/bin/:$PATH
+      if apt-get install -y cabal-install-3.0 ghc-8.8.4; then
+        export PATH=/opt/ghc/bin/:$PATH
+      else
+        cabal -j${SNAPCRAFT_PARALLEL_BUILD_COUNT} install cabal-install
+      fi
+
       cabal -j${SNAPCRAFT_PARALLEL_BUILD_COUNT} new-update
     override-build: |
       set -eu
