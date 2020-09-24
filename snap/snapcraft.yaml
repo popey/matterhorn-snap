@@ -22,33 +22,50 @@ apps:
 
 parts:
   matterhorn:
+    source: https://github.com/matterhorn-chat/matterhorn.git
+    source-branch: develop
     plugin: nil
+    override-pull: |
+      # FIXME: We need a way to make snapcraft not to use --recursive, but
+      # We keep the source and branch stuff for future and to get git deps
+      # snapcraftctl pull
+      git clone https://github.com/matterhorn-chat/matterhorn.git -b develop ${SNAPCRAFT_PART_SRC}
+
+      sed -i -e /url/s,git@github.com:,https://github.com/, ${SNAPCRAFT_PART_SRC}/.gitmodules
+      git -C ${SNAPCRAFT_PART_SRC} submodule update --init
+      for p in "${SNAPCRAFT_PROJECT_DIR}"/patches/*; do
+        (cd "${SNAPCRAFT_PART_SRC}" && patch -p1 < "$p")
+      done
+
+      add-apt-repository -y ppa:hvr/ghc
+      apt-get update && apt-get install -y cabal-install-3.0 ghc-8.8.4
+
+      export PATH=/opt/ghc/bin/:$PATH
+      cabal -j${SNAPCRAFT_PARALLEL_BUILD_COUNT} new-update
     override-build: |
       set -eu
-      ARCHITECTURE=$(dpkg --print-architecture)
-      echo "Get GitHub releases..."
-      wget --quiet https://api.github.com/repos/matterhorn-chat/matterhorn/releases -O releases.json
-      VERSION=$(jq -r '[.[].tag_name][0]' releases.json)
-      TAR_URL=$(jq -r '[.[].assets[] | select(.name | contains("ubuntu")) | select(.name | contains(".tar.")).browser_download_url ][0]' releases.json)
-      TAR=$(basename "${TAR_URL}")
-      echo "Downloading ${TAR_URL}..."
-      wget "${TAR_URL}" -O "${SNAPCRAFT_PART_INSTALL}/${TAR}"
+      export PATH=/opt/ghc/bin/:$PATH
+      export CABALARGS="-j${SNAPCRAFT_PARALLEL_BUILD_COUNT}"
+      export LANG=C.UTF-8
+
+      cd "${SNAPCRAFT_PART_BUILD}"
+      ./scripts/local-mkrelease.sh
+
+      TAR=$(ls matterhorn-*.tar.* -1)
       echo "Unpacking ${TAR}..."
       mkdir -p "${SNAPCRAFT_PART_INSTALL}/app"
-      tar jxvf "${SNAPCRAFT_PART_INSTALL}/${TAR}" -C "${SNAPCRAFT_PART_INSTALL}/app" --strip-components=1
-      for p in "$PWD"/patches/*; do
-        (cd "${SNAPCRAFT_PART_INSTALL}/app" && patch -p1 < $p)
-      done
-      install -m 755 launcher -D ${SNAPCRAFT_PART_INSTALL}/bin/matterhorn -v
-      rm -f releases.json
-      rm -f "${SNAPCRAFT_PART_INSTALL}/${TAR}"
-      snapcraftctl set-version "$VERSION"
-    source: .
+      tar jxvf "${TAR}" -C "${SNAPCRAFT_PART_INSTALL}/app" --strip-components=1
+      install -m 755 ${SNAPCRAFT_PROJECT_DIR}/launcher -D ${SNAPCRAFT_PART_INSTALL}/bin/matterhorn -v
+      rm -f "${TAR}"
+
+      snapcraftctl set-version "$(git describe --tags)"
     build-packages:
-      - wget
-      - jq
+      # Ubuntu's default can be enabled on core20, as cabal provides new-{update,build}
+      # - cabal-install
+      # - ghc
+      - software-properties-common
+      - zlib1g-dev
     stage-packages:
       - libsecret-tools
       - libnotify-bin
       - xclip
-

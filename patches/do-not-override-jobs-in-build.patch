@@ -1,0 +1,10 @@
+diff --git a/build.sh b/build.sh
+index c3091195..485c9204 100755
+--- a/build.sh
++++ b/build.sh
+@@ -7,4 +7,4 @@ set -e
+ 
+ HERE=$(cd `dirname $0`; pwd)
+ cd $HERE
+-cabal new-build -j --enable-tests
++cabal new-build --enable-tests
