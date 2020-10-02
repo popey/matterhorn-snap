@@ -14,7 +14,7 @@
  then
      test "$urgency" = "none" ||
 -        notify-send -u "$urgency" -c "$notify_CATEGORY" -- "$notify_HEAD" "$notify_BODY"
-+        notify-send -i $SNAP/meta/gui/${SNAP_NAME}.png \
++        notify-send -i /meta/gui/${SNAP_NAME}.png \
 +            -h "string:desktop-entry:${SNAP_NAME}_${SNAP_NAME}" \
 +            -u "$urgency" -c "$notify_CATEGORY" -- "$notify_HEAD" "$notify_BODY"
  fi
